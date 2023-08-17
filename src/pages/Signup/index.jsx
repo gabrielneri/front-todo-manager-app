@@ -6,22 +6,37 @@ import useAuth from "../../hooks/useAuth";
 import "./styles.css";
 
 const Signup = () => {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [passwordConf, setPasswordConf] = useState("");
+  const [password_confirmation, setPasswordConf] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const { signup } = useAuth();
 
-  const handleSignup = () => {
-    
+  const handleSignup = async () => {
+    try {
+      const userData = { name, email, password, password_confirmation, };
+      await signup(userData);
+      console.log("Cadastrado!");
+      navigate("/signin");
+    } catch(error) {
+      setError("Não foi possível cadastrar. Tente novamente.")
+      console.log("Erro: ", error);
+    }
   };
 
   return (
     <div className="container-signup"> 
       <label className="label-signup">TODO Manager App</label>
       <div className="content-signup">
+        <Input 
+          type="text"
+          placeholder="Digite seu nome"
+          value={name}
+          onChange={(e) => [setName(e.target.value), setError("")]}
+        />
         <Input 
           type="email"
           placeholder="Digite seu email"
@@ -37,7 +52,7 @@ const Signup = () => {
         <Input
           type="password"
           placeholder="Confirme sua senha"
-          value={passwordConf}
+          value={password_confirmation}
           onChange={(e) => [setPasswordConf(e.target.value), setError("")]}
         />
         <label className="label-error-signup">{error}</label>

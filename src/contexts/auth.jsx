@@ -8,15 +8,11 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState();
-  const [authHeaders, setAuthHeaders] = useState({});
+  const [user, setUser] = useState(() => {
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
 
-  const setHeaders = (headers) => {
-    setAuthHeaders(headers);
-    console.log("Headers atualizados:", headers);
-
-  };
-  
   const signin = async (userData) => {
     // eslint-disable-next-line no-useless-catch
     try {
@@ -26,11 +22,14 @@ export const AuthProvider = ({ children }) => {
         accessToken: response.headers["access-token"],
         uid: response.headers["uid"],
         client: response.headers["client"],
-      };
-  
-      setHeaders(headers);
+      };  
+      // Salvar tokens no localStorage
+      localStorage.setItem("access-token", headers.accessToken);
+      localStorage.setItem("uid", headers.uid);
+      localStorage.setItem("client", headers.client);
+      
       setUser(response.data);
-  
+      localStorage.setItem('user', JSON.stringify(response.data));
       return {
         data: response.data,
         headers: headers,
@@ -40,33 +39,44 @@ export const AuthProvider = ({ children }) => {
     }
   };
   
+  const signup = async (userData) => {
+    // eslint-disable-next-line no-useless-catch
+    try {
+      await api.post("/auth", {
+        name: userData.name,
+        email: userData.email,
+        password: userData.password,
+        password_confirmation: userData.password_confirmation,
+      });
+    } catch (error) {
+      throw error;
+    }
+  };
 
   const signout = async () => {
     // eslint-disable-next-line no-useless-catch
     try {      
-      console.log("Antes do signout:");
-      console.log(authHeaders.accessToken, authHeaders.uid, authHeaders.client);  
-      const response = await api.delete("/auth/sign_out", {
+      await api.delete("/auth/sign_out", {
         headers: { 
-          'access-token': authHeaders.accessToken,
-          'uid': authHeaders.uid,
-          'client': authHeaders.client,
+          'access-token': localStorage.getItem("access-token"),
+          'uid': localStorage.getItem("uid"),
+          'client': localStorage.getItem("client")
         }
       });
-      console.log("Logout... " + response);
+      // Remover os tokens do localStorage
+      localStorage.removeItem("access-token");
+      localStorage.removeItem("uid");
+      localStorage.removeItem("client");
+
       setUser(null);
-      setAuthHeaders({});
+      localStorage.removeItem("user");
+
     } catch(error) {
       throw error;
     }
   };
 
-
-  const isAuthenticated = () => {
-
-  };
-
-  const contextValue = { user, signin, signout, isAuthenticated, authHeaders, setHeaders, };
+  const contextValue = { user, signin, signup, signout, };
 
   return (
     <AuthContext.Provider value={contextValue}>

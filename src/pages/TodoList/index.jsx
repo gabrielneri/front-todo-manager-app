@@ -25,11 +25,14 @@ const TodoList = () => {
     { id: 11, title: "Tarefa 1", description: "Descrição 1", status: "Nova", visibility: "Pública" }, 
   ]);
   const [editingTask, setEditingTask] = useState(null);
-  const { signout } = useAuth();
+  const { user, signout } = useAuth();
   const navigate = useNavigate();
+
+  const userName = user ? user.data.name.slice(0, 9) : "";
 
   const handleSignout = async () => {
     try {
+      console.log("User: ", user);
       await signout();
       navigate("/home");
     } catch (error) {
@@ -72,7 +75,7 @@ const TodoList = () => {
               <a href="#" onClick={handleSignout}>Sair</a>
             </div>
           </div>
-          <span className="icon-name">Bem vindo, Gabriel!</span>
+          <span className="icon-name">Bem vindo, {userName}</span>
         </div>
       </div>
       <div className="new-task-button">
