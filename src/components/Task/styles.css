@@ -1,0 +1,52 @@
+.task-container {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+.task-container:hover {
+  background: #f2f8fb;
+}
+.checkbox {
+  display: none;
+}
+.custom-checkbox-container {
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+  cursor: pointer;
+}
+.custom-checkbox {
+  width: 24px;
+  height: 24px;
+  background-color: white;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.custom-checkbox:before {
+  content: "\2714"; 
+  font-size: 18px;
+  color: white;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.checkbox:checked + .custom-checkbox {
+  background-color: #0074D9;
+  border-color: #0074D9;
+}
+.checkbox:checked + .custom-checkbox:before {
+  opacity: 1;
+}
+.task-label {
+  white-space: nowrap;
+  margin-right: auto; 
+}
+.icons-task {
+  cursor: pointer;
+}
