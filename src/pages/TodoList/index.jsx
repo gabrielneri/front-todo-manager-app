@@ -56,7 +56,6 @@ const TodoList = () => {
     setSelectedOptions(selectedOptions);
     const visibilityParam = getVisibilityParam(selectedOptions);
     const statusParam = getStatusParam(selectedOptions);
-    console.log("Oi tudo bem!!!");
     try {
       const response = await api.get(`/tasks?visibility=${visibilityParam}&status=${statusParam}`);
       setTasks(response.data);
@@ -72,7 +71,6 @@ const TodoList = () => {
 
   const handleSignout = async () => {
     try {
-      console.log("User: ", user);
       await signout();
       navigate("/home");
     } catch (error) {

@@ -32,7 +32,6 @@ const Task = ({ task, onEdit, onDelete, openInfoModal, errorMessageFromTodo, sel
     }
     try {
       const newStatus = isFinished ? "not_finished" : "finished";
-      console.log(newStatus, isFinished);
       const response = await api.put(`/tasks/${task.id}/status`, { status: newStatus });
       if (response.status) {
         setIsFinished(!isFinished);

@@ -16,7 +16,6 @@ const Signin = () => {
   const handleLogin = async () => {
     try {
       const user = await signin({ email, password });
-      console.log("API:", user); 
       navigate("/");
     } catch (error) {
       setError("Não foi possível conectar.");

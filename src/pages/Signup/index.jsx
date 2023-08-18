@@ -19,11 +19,9 @@ const Signup = () => {
     try {
       const userData = { name, email, password, password_confirmation, };
       await signup(userData);
-      console.log("Cadastrado!");
       navigate("/signin");
     } catch(error) {
       setError("Não foi possível cadastrar. Tente novamente.")
-      console.log("Erro: ", error);
     }
   };
 
