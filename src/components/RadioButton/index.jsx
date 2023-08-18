@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import "./styles.css";
 
-const RadioButton = ({ Options }) => {
-  const [selectedOption, setSelectedOption] = useState('');
+const RadioButton = ({ Options, onOptionChange, task, isDisabled }) => {
+  const preOption = task ? (task.visibility == 'public_task' ? "option1" : "option2") : "option1";
+  const [selectedOption, setSelectedOption] = useState(preOption);
 
   const handleOptionChange = (event) => {
-    setSelectedOption(event.target.value);
+    const selectedValue = event.target.value;
+    setSelectedOption(selectedValue);
+    onOptionChange(selectedValue);
   };
 
   return (
@@ -17,6 +20,7 @@ const RadioButton = ({ Options }) => {
             value={`option${index + 1}`}
             checked={selectedOption === `option${index + 1}`}
             onChange={handleOptionChange}
+            disabled={isDisabled}
           />
           <span className="option-text">{option}</span>
         </label>

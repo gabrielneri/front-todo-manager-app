@@ -56,13 +56,7 @@ export const AuthProvider = ({ children }) => {
   const signout = async () => {
     // eslint-disable-next-line no-useless-catch
     try {      
-      await api.delete("/auth/sign_out", {
-        headers: { 
-          'access-token': localStorage.getItem("access-token"),
-          'uid': localStorage.getItem("uid"),
-          'client': localStorage.getItem("client")
-        }
-      });
+      await api.delete("/auth/sign_out");
       // Remover os tokens do localStorage
       localStorage.removeItem("access-token");
       localStorage.removeItem("uid");

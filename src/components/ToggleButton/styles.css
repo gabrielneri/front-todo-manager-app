@@ -53,3 +53,10 @@
 input[type="checkbox"]:checked + .slider::before {
   transform: translateX(20px);
 }
+.toggle-button-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: red;
+}

@@ -46,6 +46,7 @@
 .task-label {
   white-space: nowrap;
   margin-right: auto; 
+  cursor: pointer;
 }
 .icons-task {
   cursor: pointer;
