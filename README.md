@@ -1,8 +1,9 @@
-# React + Vite
+# README
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+- Frontent para consumir a [API](https://github.com/gabrielneri/api-todo-manager-app).
 
-Currently, two official plugins are available:
+![Tela Inicial](/home.png)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+![Cadastro e Login](/sign_in_up.png)
+
+![Todo](/todo.png)
