@@ -19,6 +19,10 @@ const TodoList = () => {
   const [isEditingModalOpen, setIsEditingModalOpen] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState([]);
   const { user, signout } = useAuth();
+  const [errorMessageTask, setErrorMessageTask] = useState({ taskId: null, message: "" });
+  const [errorMessageKey, setErrorMessageKey] = useState(0);
+
+  
   const navigate = useNavigate();
 
   const userName = user ? user.data.name.slice(0, 9) : "";
@@ -55,9 +59,13 @@ const TodoList = () => {
     console.log("Oi tudo bem!!!");
     try {
       const response = await api.get(`/tasks?visibility=${visibilityParam}&status=${statusParam}`);
-      console.log("to aqui", response.data);
       setTasks(response.data);
     } catch (error) {
+      if (error.response && error.response.status === 401) {
+        signout();
+        navigate("/home");
+        return;
+      }
       console.error("Error fetching tasks:", error);
     }
   };
@@ -92,17 +100,13 @@ const TodoList = () => {
     visibilityParam = visibilityParam === "private" ? "private_task" : visibilityParam;
     const shouldAddTask = (visibilityParam === "all" || visibilityParam === editedTask.visibility) &&
       (statusParam === "all" || statusParam === editedTask.status);
-    console.log("visi", visibilityParam);
-    console.log("st", statusParam);
-    console.log("ts", editedTask);
+
     if (shouldAddTask) {
-      console.log("aqui...");
       setTasks((prevTasks) =>
         prevTasks.map((prevTask) =>
         prevTask.id === editedTask.id ? editedTask : prevTask
       ));
     } else {
-      console.log("aqui em baixo")
       setTasks((prevTasks) =>
         prevTasks.filter((prevTask) => prevTask.id !== editedTask.id)
       );
@@ -112,27 +116,34 @@ const TodoList = () => {
 
   const handleEditTask = (editedTask) => {
     if (user.data.uid !== editedTask.user.uid || editedTask.status == "finished") {
-      alert("Não é possível editar essa tarefa.");
+      setErrorMessageTask({ taskId: editedTask.id, message: "Você não tem permissão para editar esta tarefa." });
+      setErrorMessageKey(errorMessageKey + 1);
       return;
     }
     setEditingTask(editedTask);
-    console.log("aaaaaaaaalo", editedTask);
+    setErrorMessageTask({ taskId: null, message: "" });
+    setErrorMessageKey(errorMessageKey + 1);
     setIsEditingModalOpen(true);
-    //setModalIsOpen(true); 
   };
 
   const handleDeleteTask = async (taskToDelete) => {
-    console.log(taskToDelete);
-    console.log(user.data.uid, taskToDelete.user.uid);
     if (user.data.uid !== taskToDelete.user.uid) {
-      alert("Você não tem permissão para excluir esta tarefa.");
+      setErrorMessageTask({ taskId: taskToDelete.id, message: "Você não tem permissão para excluir esta tarefa." });
+      setErrorMessageKey(errorMessageKey + 1);
       return;
     }
     try {
       await api.delete(`/tasks/${taskToDelete.id}`);
       const updatedTasks = tasks.filter(task => task.id !== taskToDelete.id);
       setTasks(updatedTasks);
+      setErrorMessageTask({ taskId: null, message: "" }); 
+      setErrorMessageKey(errorMessageKey + 1);
     } catch (error) {
+      if (error.response && error.response.status === 401) {
+        signout();
+        navigate("/home");
+        return;
+      }
       console.error("Erro ao excluir a tarefa:", error);
     }
   };
@@ -194,11 +205,12 @@ const TodoList = () => {
       />
       {tasks.map((task) => (
         <Task 
-          key={task.id}
+          key={`${task.id}-${errorMessageKey}`}
           task={task}
           onEdit={() => handleEditTask(task)}
           onDelete={() => handleDeleteTask(task)}
           openInfoModal={() => openInfoModal(task)}
+          errorMessageFromTodo={task.id === errorMessageTask.taskId ? errorMessageTask.message : ""}
         />
       ))}
       {selectedTaskInfo && (

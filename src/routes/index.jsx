@@ -7,22 +7,22 @@ import Signup from "../pages/Signup";
 import useAuth from "../hooks/useAuth";
 import api from "../services/api";
 
-const Private = ({ Item }) => {
+const Private = ({ Item, Other }) => {
   const { user } = useAuth(); 
   console.log("user: ", user);
   const signed = !!user;
   console.log("Tem alguem logado? ", signed);
-  return signed ? <Item /> : <Home />;
+  return signed ? <Item /> : <Other />;
 };
 
 const RoutesApp = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Private Item={TodoList} />} />
-        <Route path="/signin" element={<Signin />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/home" element={<Private Item={TodoList} />} />
+        <Route path="/" element={<Private Item={TodoList} Other={Home}/>} />
+        <Route path="/signin" element={<Private Item={TodoList} Other={Signin} />} />
+        <Route path="/signup" element={<Private Item={TodoList} Other={Signup} />} />
+        <Route path="/home" element={<Private Item={TodoList} Other={Home}/>} />
       </Routes>
     </BrowserRouter>
   );

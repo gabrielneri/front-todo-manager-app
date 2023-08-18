@@ -20,9 +20,6 @@ const ToggleButton = ({ Text, Options, onFilterTasks, onClearTasks }) => {
   useEffect(() => {
     const visibilityQtd = (selectedOptions.includes("option1") ? 1 : 0) + (selectedOptions.includes("option2") ? 1 : 0);
     const statusQtd = (selectedOptions.includes("option3") ? 1 : 0) + (selectedOptions.includes("option4") ? 1 : 0);
-    console.log("visibilityqtd", visibilityQtd);
-    console.log("statusqtd", statusQtd);
-    console.log("selected", selectedOptions);
     setIsVisibilitySelected(visibilityQtd);
     setIsStatusSelected(statusQtd);
   }, [selectedOptions]);

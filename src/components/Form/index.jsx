@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import Modal from 'react-modal';
 import "./styles.css";
@@ -8,6 +9,8 @@ import RadioButton from "../RadioButton";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import api from "../../services/api";
+import useAuth from "../../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const checkVisibility = (task) => {
   let vis;
@@ -29,6 +32,11 @@ const checkVisibility = (task) => {
 };
 
 const Form = ({ actionName, isOpen, onClose, setTasks, buttonName, task }) => {
+
+  const { signout } = useAuth();
+  const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState("");
+
   const [formData, setFormData] = useState({
     id: task ? task.id : '',
     title: task ? task.title : '',
@@ -58,8 +66,11 @@ const Form = ({ actionName, isOpen, onClose, setTasks, buttonName, task }) => {
 
   const newTask = async (event) => {
     event.preventDefault();
+    if (!formData.title || !formData.description) {
+      setErrorMessage("Preencha todos os campos.");
+      return;
+    }
     // Enviar os dados p a API
-    console.log("nova tarefa", formData);
     try {
       const response = await api.post("/tasks", {
         title: formData.title,
@@ -71,15 +82,24 @@ const Form = ({ actionName, isOpen, onClose, setTasks, buttonName, task }) => {
         setTasks(response.data);
         onClose(); // fechar o modal
       } else {
-        console.error("Erro ao adicionar a tarefa:", response.data);
+        setErrorMessage("Erro ao adicionar a tarefa");
       }
     } catch (error) {
-      console.error("Erro na requisição:", error);
+      if (error.response && error.response.status === 401) {
+        signout();
+        navigate("/home");
+        return;
+      }
+      setErrorMessage("Erro na requisição");
     }
   };
 
   const editTask = async (event) => {
     event.preventDefault();
+    if (!formData.title || !formData.description) {
+      setErrorMessage("Preencha todos os campos.");
+      return;
+    }
     // Put p dar update nos dados
     try {
       const response = await api.put(`/tasks/${task.id}`, {
@@ -93,10 +113,10 @@ const Form = ({ actionName, isOpen, onClose, setTasks, buttonName, task }) => {
         setTasks(response.data);
         onClose(); // Fecha o modal
       } else {
-        console.error("Erro ao atualizar a tarefa:", response.data);
+        setErrorMessage("Erro ao atualizar a tarefa");
       }
     } catch (error) {
-      console.log("Erro na requisição", error);
+      setErrorMessage("Erro na requisição");
     }
   };
 
@@ -109,7 +129,7 @@ const Form = ({ actionName, isOpen, onClose, setTasks, buttonName, task }) => {
         editTask(event);
         break;
       default:
-        console.log("Error");
+        setErrorMessage("Não foi possível executar a ação");
     }
   };
 
@@ -145,7 +165,7 @@ const Form = ({ actionName, isOpen, onClose, setTasks, buttonName, task }) => {
             isDisabled={infoMode}
             task={task}
           />
-          <label className="label-error"></label>
+          <label className="label-error">{errorMessage}</label>
           {!infoMode && <Button Text={buttonName} onClick={handleSubmit} />}
         </div>
       </div>
