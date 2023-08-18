@@ -10,17 +10,20 @@
 - react-modal
 - font awesome
 
+### TELA INICIAL
+
 <p align="center">
-  <strong>Tela inicial</strong><br>
   <img src="/home.png" alt="Tela Inicial">
 </p>
 
+### CADASTRO E LOGIN
+
 <p align="center">
-  <strong>Cadastro e Login</strong><br>
   <img src="/sign.png" alt="Cadastro e Login">
 </p>
 
+### TODO
+
 <p align="center">
-  <strong>Todo</strong><br>
   <img src="/todo.png" alt="Todo">
 </p>
