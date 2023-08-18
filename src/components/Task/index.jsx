@@ -6,7 +6,7 @@ import api from "../../services/api";
 import useAuth from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 
-const Task = ({ task, onEdit, onDelete, openInfoModal, errorMessageFromTodo }) => {
+const Task = ({ task, onEdit, onDelete, openInfoModal, errorMessageFromTodo, selectedOptions, editTaskList }) => {
   const [isFinished, setIsFinished] = useState(task.status === "finished");
   const { user, signout } = useAuth();
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ const Task = ({ task, onEdit, onDelete, openInfoModal, errorMessageFromTodo }) =
       setErrorMessage("");
     }, 1500); 
   };
-
+  
   const handleCheckboxChange = async () => {
     if (user.data.uid !== task.user.uid) {
       showErrorMessage("Você não pode marcar a tarefa de outro usuário como concluída.");
@@ -32,10 +32,12 @@ const Task = ({ task, onEdit, onDelete, openInfoModal, errorMessageFromTodo }) =
     }
     try {
       const newStatus = isFinished ? "not_finished" : "finished";
-      // Fazer a requisição de update p API
-      const response = await api.put(`/tasks/${task.id}/status`, {status: newStatus});
+      console.log(newStatus, isFinished);
+      const response = await api.put(`/tasks/${task.id}/status`, { status: newStatus });
       if (response.status) {
         setIsFinished(!isFinished);
+        task.status = task.status === "not_finished" ? "finished" : "not_finished";
+        editTaskList(task);
       } else {
         console.error("Erro ao atualizar o status da tarefa.");
       }
@@ -56,7 +58,12 @@ const Task = ({ task, onEdit, onDelete, openInfoModal, errorMessageFromTodo }) =
     </div>
     <div className="task-container"> 
       <label className="custom-checkbox-container">
-        <input type="checkbox" className="checkbox" checked={isFinished}  onChange={handleCheckboxChange} />
+        <input 
+          type="checkbox" 
+          className="checkbox" 
+          checked={isFinished}          
+          onChange={handleCheckboxChange}
+        />
         <div className="custom-checkbox"></div>
       </label>
       <div className="task-label" onClick={() => openInfoModal(task)}>{task.title}</div>

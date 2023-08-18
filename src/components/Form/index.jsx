@@ -70,6 +70,7 @@ const Form = ({ actionName, isOpen, onClose, setTasks, buttonName, task }) => {
       setErrorMessage("Preencha todos os campos.");
       return;
     }
+    console.log("Nova tarefa", formData);
     // Enviar os dados p a API
     try {
       const response = await api.post("/tasks", {

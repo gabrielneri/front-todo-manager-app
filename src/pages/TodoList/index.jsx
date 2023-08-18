@@ -100,7 +100,7 @@ const TodoList = () => {
     visibilityParam = visibilityParam === "private" ? "private_task" : visibilityParam;
     const shouldAddTask = (visibilityParam === "all" || visibilityParam === editedTask.visibility) &&
       (statusParam === "all" || statusParam === editedTask.status);
-
+    console.log(visibilityParam, statusParam, editedTask);
     if (shouldAddTask) {
       setTasks((prevTasks) =>
         prevTasks.map((prevTask) =>
@@ -210,6 +210,8 @@ const TodoList = () => {
           onEdit={() => handleEditTask(task)}
           onDelete={() => handleDeleteTask(task)}
           openInfoModal={() => openInfoModal(task)}
+          editTaskList={editTaskList}
+          selectedOptions={selectedOptions}
           errorMessageFromTodo={task.id === errorMessageTask.taskId ? errorMessageTask.message : ""}
         />
       ))}
