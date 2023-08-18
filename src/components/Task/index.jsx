@@ -1,14 +1,19 @@
 import React, { useState } from "react";
 import "./styles.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPenToSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faCircle, faPenToSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
 import api from "../../services/api";
+import useAuth from "../../hooks/useAuth";
 
 const Task = ({ task, onEdit, onDelete, openInfoModal }) => {
   const [isFinished, setIsFinished] = useState(task.status === "finished");
+  const { user } = useAuth();
 
   const handleCheckboxChange = async () => {
-    //setIsFinished(!isFinished);
+    if (user.data.uid !== task.user.uid) {
+      alert("Você não pode marcar a tarefa de outro usuário como concluída.");
+      return;
+    }
     try {
       const newStatus = isFinished ? "not_finished" : "finished";
       // Fazer a requisição de update p API
@@ -31,6 +36,12 @@ const Task = ({ task, onEdit, onDelete, openInfoModal }) => {
       </label>
       <div className="task-label" onClick={() => openInfoModal(task)}>{task.title}</div>
       <div className="icons-task">
+        {user.data.uid === task.user.uid &&  <FontAwesomeIcon icon={faCircle} className="circle-user" title="Minha tarefa" />}
+        <FontAwesomeIcon
+          icon={faCircle}
+          className={`circle-visibility ${task.visibility === "public_task" ? "blue" : "gray"}`}
+          title={task.visibility === "public_task" ? "Pública" : "Privada"}
+        />
         <FontAwesomeIcon icon={faPenToSquare} onClick={() => onEdit(task)}/>
         <FontAwesomeIcon icon={faTrash} onClick={() => onDelete(task)}/>
       </div>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from 'react-modal';
 import "./styles.css";
 import Input from "../Input";
@@ -9,14 +9,43 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import api from "../../services/api";
 
+const checkVisibility = (task) => {
+  let vis;
+  if (task) {
+    switch (task.visibility) {
+      case "public_task":
+        vis = "option1";
+        break;
+      case "private_task":
+        vis = "option2";
+        break;
+      default:
+        vis = task.visibility;
+    }
+  } else {
+    vis = "option1";
+  }
+  return vis;  
+};
+
 const Form = ({ actionName, isOpen, onClose, setTasks, buttonName, task }) => {
   const [formData, setFormData] = useState({
     id: task ? task.id : '',
     title: task ? task.title : '',
     description: task ? task.description : '',
     status: "not_finished",
-    visibility: task ? task.visibility : '',
+    visibility: checkVisibility(task),
   });
+
+  useEffect(() => {
+    setFormData({
+      id: task ? task.id : '',
+      title: task ? task.title : '',
+      description: task ? task.description : '',
+      status: "not_finished",
+      visibility: checkVisibility(task),
+    });
+  }, [task]);
 
   const handleVisibilityChange = (value) => {
     setFormData((prevData) => ({ ...prevData, visibility: value }));
@@ -30,6 +59,7 @@ const Form = ({ actionName, isOpen, onClose, setTasks, buttonName, task }) => {
   const newTask = async (event) => {
     event.preventDefault();
     // Enviar os dados p a API
+    console.log("nova tarefa", formData);
     try {
       const response = await api.post("/tasks", {
         title: formData.title,
@@ -38,7 +68,7 @@ const Form = ({ actionName, isOpen, onClose, setTasks, buttonName, task }) => {
         visibility: formData.visibility == "option1" ? "public_task" : "private_task",
       });
       if (response.status === 201) {
-        setTasks((prevTasks) => [...prevTasks, response.data]);
+        setTasks(response.data);
         onClose(); // fechar o modal
       } else {
         console.error("Erro ao adicionar a tarefa:", response.data);
@@ -60,10 +90,7 @@ const Form = ({ actionName, isOpen, onClose, setTasks, buttonName, task }) => {
       });
       if (response.status === 200) {
         // Att o estado dessa tarefa
-        setTasks((prevTasks) =>
-          prevTasks.map((prevTask) =>
-          prevTask.id === task.id ? response.data : prevTask
-        ));
+        setTasks(response.data);
         onClose(); // Fecha o modal
       } else {
         console.error("Erro ao atualizar a tarefa:", response.data);
@@ -74,7 +101,6 @@ const Form = ({ actionName, isOpen, onClose, setTasks, buttonName, task }) => {
   };
 
   const handleSubmit = async (event) => {
-    console.log(formData);
     switch (actionName) {
       case "Nova tarefa":
         newTask(event);
@@ -88,7 +114,7 @@ const Form = ({ actionName, isOpen, onClose, setTasks, buttonName, task }) => {
   };
 
   const infoMode = actionName == "Detalhes da Tarefa";
-  console.log("actionName", actionName);
+  
   return (
     <Modal isOpen={isOpen} onRequestClose={onClose}>
       <div className="container">

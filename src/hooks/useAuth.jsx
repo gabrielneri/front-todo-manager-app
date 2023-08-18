@@ -7,6 +7,7 @@ const useAuth = () => {
   const accessToken = localStorage.getItem('access-token');
   const uid = localStorage.getItem('uid');
   const client = localStorage.getItem('client');
+  
   if (accessToken && uid && client) {
     api.defaults.headers.common['access-token'] = accessToken;
     api.defaults.headers.common['uid'] = uid;

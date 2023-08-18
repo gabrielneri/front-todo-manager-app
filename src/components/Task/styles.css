@@ -48,6 +48,21 @@
   margin-right: auto; 
   cursor: pointer;
 }
+.circle-user {
+  margin-right: 10px;
+  color: black;
+  cursor: default;
+}
+.circle-visibility {
+  margin-right: 10px;
+  cursor: default;
+}
+.circle-visibility.blue {
+  color: #046ee5;
+}
+.circle-visibility.gray {
+  color: #ccc;
+}
 .icons-task {
   cursor: pointer;
 }

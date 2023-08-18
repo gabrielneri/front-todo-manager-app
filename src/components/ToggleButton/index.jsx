@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import useFetch from '../../hooks/useFetch';
 import "./styles.css";
 
-const ToggleButton = ({ Text, Options, onFilterTasks }) => {
+const ToggleButton = ({ Text, Options, onFilterTasks, onClearTasks }) => {
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [isVisibilitySelected, setIsVisibilitySelected] = useState(false);
   const [isStatusSelected, setIsStatusSelected] = useState(false);
@@ -19,8 +18,13 @@ const ToggleButton = ({ Text, Options, onFilterTasks }) => {
 
   // option1 = "Públicas", option2 = "Privadas", option3 = "Novas", option4 = "Concluídas"
   useEffect(() => {
-    setIsVisibilitySelected(selectedOptions.includes("option1") || selectedOptions.includes("option2"));
-    setIsStatusSelected(selectedOptions.includes("option3") || selectedOptions.includes("option4"));
+    const visibilityQtd = (selectedOptions.includes("option1") ? 1 : 0) + (selectedOptions.includes("option2") ? 1 : 0);
+    const statusQtd = (selectedOptions.includes("option3") ? 1 : 0) + (selectedOptions.includes("option4") ? 1 : 0);
+    console.log("visibilityqtd", visibilityQtd);
+    console.log("statusqtd", statusQtd);
+    console.log("selected", selectedOptions);
+    setIsVisibilitySelected(visibilityQtd);
+    setIsStatusSelected(statusQtd);
   }, [selectedOptions]);
 
   const handleFilterTasks = async () => {
@@ -36,7 +40,14 @@ const ToggleButton = ({ Text, Options, onFilterTasks }) => {
     handleFilterTasks();
   }, [isVisibilitySelected, isStatusSelected]);
 
-  
+  useEffect(() => {
+    if (!(selectedOptions.includes("option1") || selectedOptions.includes("option2")) ||
+      !(selectedOptions.includes("option3") || selectedOptions.includes("option4"))) {
+      onClearTasks();
+    }
+  }, [selectedOptions]);
+
+
   return (
     <div className="options-toggle">
       <div className="option-label">
