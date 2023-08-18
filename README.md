@@ -7,6 +7,11 @@
 - yarn 1.22.19
 - node v20.5.1
 
+### Executar
+
+- yarn install
+- yarn dev
+
 ### Libs
 
 - axios
