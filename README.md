@@ -2,6 +2,11 @@
 
 - Frontent para consumir a [API](https://github.com/gabrielneri/api-todo-manager-app) utilizando o axios.
 
+### Pré-requisitos
+
+- yarn 1.22.19
+- node v20.5.1
+
 ### Libs
 
 - axios
